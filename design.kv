@@ -1,0 +1,176 @@
+# Each head <objects> represented by class, need to define each in python main file
+<LoginScreen>:
+    # two layouts sit in one main column
+    GridLayout:   # these are objects
+        cols: 1
+        GridLayout:
+            cols: 1
+            padding: 15, 15   # distance between this gridlayout box and boundary
+            spacing: 20, 20   # distance between the following layouts
+            Label:
+                text: "User Login"
+                font_size: "20sp" # sp = space-independent pixels
+            TextInput:
+                id: username
+                hint_text: "Username"   # grayed hint in box
+            TextInput:
+                id: password
+                password: True
+                hint_text: "Password"
+            RelativeLayout:
+                Button:
+                    text: "Login"
+                    on_press: root.login(root.ids.username.text, root.ids.password.text)
+                    size_hint: 0.3, 0.5    # x vs y proportional size
+                    pos_hint: {'center_x': 0.5, 'center_y':0.6}
+            Label:
+                id: login_wrong
+                text: ""
+        GridLayout:
+            cols: 2
+            size_hint: 0.2, 0.2   # two for both columns
+            padding: 10, 10
+            spacing: 10, 0          # 10 for horizontal, 0 = ver since no vertical stacking
+            Button:
+                text: "Forgot Password?"
+                on_press: root.forget_password()
+                background_color: 0.1, 0.7, 1, 0   # RGB+opacity
+                opacity: 1 if self.state == 'normal' else 0.5 # self = this button
+            Button:
+                text: "Sign Up"
+                on_press: root.sign_up()
+                # root here = class of the root widget = LoginScreen
+                background_color: 0.1, 0.7, 1, 0
+                opacity: 1 if self.state == 'normal' else 0.5
+
+<SignUpScreen>:
+    GridLayout:
+        cols: 1
+        GridLayout:
+            cols: 1
+            padding: 15, 15
+            spacing: 20, 20
+            size_hint: 0.25, 0.25  # relative Grid size
+            RelativeLayout:
+                Button:
+                    text: 'Back'
+                    on_press: root.go_back()
+                    background_color: 0.1, 0.7, 1, 0
+                    opacity: 1 if self.state == 'normal' else 0.5
+                    size_hint: 0.15, 0.45   # size relative to its parental grid, control size of click area
+                    pos_hint: {'center_x': 0.07, 'center_y':0.8}
+        GridLayout:
+            cols: 1
+            padding: 20, 20
+            spacing: 20, 20
+            Label:
+                text: "Sign up for a space journey!"
+            TextInput:
+                id: username
+                hint_text: "New Username"
+            TextInput:
+                id: password
+                hint_text: "New Password"
+            RelativeLayout:
+                Button:
+                    text: "Submit"
+                    # if not accessing text attribute in ids, the object will be returned
+                    on_press: root.add_user(root.ids.username.text, root.ids.password.text)
+                    size_hint: 0.3, 0.5
+                    pos_hint: {'center_x': 0.5, 'center_y':0.6}
+
+<SignUpScreenSuccess>:
+    GridLayout:
+        padding: 20, 20
+        spacing: 20, 20
+        cols: 1
+        Label:
+            text: "Sign up successful!"
+        Button:
+            text: "Login now!"
+            on_press: root.go_to_login()
+
+<LoginScreenSuccess>:
+    GridLayout:
+        cols: 1
+        padding: 30, 30
+        spacing: 30, 30
+        RelativeLayout:
+            ImageButton:   # an empty class set in main.py
+                on_press: root.log_out()
+                source: 'logout_hover.png' if self.hovered else 'logout_nothover.png'
+                size_hint: 0.35, 0.35
+                pos_hint: {'center_x': 0.93, 'center_y':0.8}
+        Label:
+            text: "How do you feel?"
+        TextInput:
+            id: feeling
+            hint_text: "Things to try: happy, sad, unloved..."
+        Button:
+            text: "Enlighten me"
+            on_press: root.get_quote(root.ids.feeling.text)
+        ScrollView:  # this makes text scrollable
+            id: scrollview
+            Label:
+                id: quote
+                text: ""
+                # we want the height size to be dynamic with the text
+                text_size: self.width, None
+                size_hint_y: None
+                height: self.texture_size[1]   # [0] = width
+
+
+<NewPassword>:
+    GridLayout:
+        cols: 1
+        GridLayout:
+            cols: 1
+            padding: 15, 15
+            spacing: 20, 20
+            size_hint: 0.25, 0.25
+            RelativeLayout:
+                Button:
+                    text: 'Back'
+                    on_press: root.go_back()
+                    background_color: 0.1, 0.7, 1, 0
+                    opacity: 1 if self.state == 'normal' else 0.5
+                    size_hint: 0.15, 0.45
+                    pos_hint: {'center_x': 0.07, 'center_y':0.8}
+        GridLayout:
+            cols: 1
+            padding: 20, 20
+            spacing: 20, 20
+            Label:
+                text: "Reset password for this user!"
+            TextInput:
+                id: reset_user
+                hint_text: "The username you wish to reset password for..."
+            TextInput:
+                id: new_password
+                hint_text: "New password"
+            RelativeLayout:
+                Button:
+                    text: "Submit"
+                    on_press: root.reset(root.ids.reset_user.text, root.ids.new_password.text)
+                    size_hint: 0.3, 0.5
+                    pos_hint: {'center_x': 0.5, 'center_y':0.6}
+            Label:
+                id: inform
+                text: ""
+
+
+# invisible widget that keeps track of all the screen in the app
+# As our app grows larger, the above codes get more complex,
+# so we set the RootWidget apart from the main kv text to make
+# it looks simpler
+<RootWidget>:
+    LoginScreen:
+        name: "login_screen"
+    SignUpScreen:
+        name: "sign_up_screen"
+    SignUpScreenSuccess:
+        name: "sign_up_screen_success"
+    LoginScreenSuccess:
+        name: "login_screen_success"
+    NewPassword:
+        name: "set_new_password"
